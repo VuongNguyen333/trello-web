@@ -3,7 +3,6 @@ import Button from '@mui/material/Button'
 import AccessAlarmIcon from '@mui/icons-material/AccessAlarm'
 import ThreeDRotation from '@mui/icons-material/ThreeDRotation'
 import Typography from '@mui/material/Typography'
-import useMediaQuery from '@mui/material/useMediaQuery'
 import InputLabel from '@mui/material/InputLabel'
 import MenuItem from '@mui/material/MenuItem'
 import FormControl from '@mui/material/FormControl'
@@ -12,7 +11,7 @@ import LightModeIcon from '@mui/icons-material/LightMode'
 import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined'
 import SettingsBrightnessIcon from '@mui/icons-material/SettingsBrightness'
 import { useColorScheme } from '@mui/material/styles'
-
+import { Box } from '@mui/material'
 function ModeSelect() {
   const { mode, setMode } = useColorScheme()
   const handleChange = (event) => {
@@ -38,14 +37,14 @@ function ModeSelect() {
           </div>
         </MenuItem>
         <MenuItem value="light">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <LightModeIcon fontSize='samll' ></LightModeIcon> Light
-          </div>
+          </Box>
         </MenuItem>
         <MenuItem value="system">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <SettingsBrightnessIcon fontSize='samll'></SettingsBrightnessIcon> System
-          </div>
+          </Box>
         </MenuItem>
       </Select>
     </FormControl>
@@ -74,9 +73,9 @@ function ModeToggle() {
 function App() {
   return (
     <>
-      <ModeToggle></ModeToggle>
-      <hr />
       <ModeSelect></ModeSelect>
+      <hr />
+      <ModeToggle></ModeToggle>
       <hr />
       <div>vuongDev</div>
       <Typography variant="body2" color="text.secondary">Test</Typography>
