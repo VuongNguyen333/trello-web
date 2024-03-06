@@ -23,30 +23,33 @@ function AppBar() {
         height: (theme) => theme.trelloCustom.appBarHeight,
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
+        gap: 2,
+        overflowX: 'auto'
       }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           <AppsIcon sx={{ color: 'primary.main' }}></AppsIcon>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-            <SvgIcon component={TrelloIcon} fontSize = 'small' inheritViewbox sx={{ color: 'primary.main' }}></SvgIcon>
+            <SvgIcon component={TrelloIcon} fontSize='small' inheritViewbox sx={{ color: 'primary.main' }}></SvgIcon>
             <Typography variant='span' sx={{ fontSize: '1.2rem', fontWeight: 'bold', color: 'primary.main' }}>Trello</Typography>
           </Box>
 
-          <Workspaces></Workspaces>
-          <Recent></Recent>
-          <Starred></Starred>
-          <Templates></Templates>
-
-          <Button variant="outlined">Create</Button>
+          <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1 }}>
+            <Workspaces></Workspaces>
+            <Recent></Recent>
+            <Starred></Starred>
+            <Templates></Templates>
+            <Button variant="outlined">Create</Button>
+          </Box>
         </Box>
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          <TextField id="outlined-search" label="Search..." type="search" size='small' />
+          <TextField id="outlined-search" label="Search..." type="search" size='small' sx={{ minWidth: 120 }} />
           <ModeSelect></ModeSelect>
 
           <Tooltip title="Notification">
             <Badge color="secondary" variant="dot" sx={{ cursor: 'pointer' }}>
-              <NotificationsNoneIcon sx={{ color: 'primary.main' }}/>
+              <NotificationsNoneIcon sx={{ color: 'primary.main' }} />
             </Badge>
           </Tooltip>
 
