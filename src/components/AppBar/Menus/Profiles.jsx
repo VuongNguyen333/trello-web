@@ -31,7 +31,7 @@ function Profiles() {
           aria-expanded={open ? 'true' : undefined}
         >
           <Avatar
-            sx={{ width: 30, height: 30 }}
+            sx={{ width: 34, height: 34 }}
             alt='Vuong Dev'
             src='https://avatars.githubusercontent.com/u/108895030?s=400&u=a4a2dfeb897eb7e4e5a5125150306653774c9f9b&v=4'
           />
@@ -48,15 +48,15 @@ function Profiles() {
       >
         <MenuItem onClick={handleClose}>
           <Avatar
-            sx={{ width: 28, height: 28, mr: 1.2 }}
-            alt='Vuong Dev'
+            sx={{ width: 34, height: 34, mr: 1.2 }}
+            alt='VuongIT'
             src='https://avatars.githubusercontent.com/u/108895030?s=400&u=a4a2dfeb897eb7e4e5a5125150306653774c9f9b&v=4'
           /> Profile
         </MenuItem>
         <MenuItem>
           <Avatar
-            sx={{ width: 28, height: 28, mr: 1.2 }}
-            alt='Vuong Dev'
+            sx={{ width: 34, height: 34, mr: 1.2 }}
+            alt='VuongIT'
             src='https://avatars.githubusercontent.com/u/108895030?s=400&u=a4a2dfeb897eb7e4e5a5125150306653774c9f9b&v=4'
           /> My account
         </MenuItem>

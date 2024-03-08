@@ -1,7 +1,7 @@
+import { ReactComponent as TrelloIcon } from '~/assets/trello.svg'
 import Box from '@mui/material/Box'
 import ModeSelect from '~/components/ModeSelect'
 import AppsIcon from '@mui/icons-material/Apps'
-import { ReactComponent as TrelloIcon } from '~/assets/trello.svg'
 import SvgIcon from '@mui/material/SvgIcon'
 import Typography from '@mui/material/Typography'
 import Workspaces from './Menus/Workspaces'
@@ -15,15 +15,17 @@ import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone'
 import Tooltip from '@mui/material/Tooltip'
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline'
 import Profiles from './Menus/Profiles'
+import LibraryAddIcon from '@mui/icons-material/LibraryAdd'
 function AppBar() {
   return (
     <div>
-      <Box px={2} sx={{
+      <Box sx={{
         width: '100%',
         height: (theme) => theme.trelloCustom.appBarHeight,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
+        px: 2,
         gap: 2,
         overflowX: 'auto'
       }}>
@@ -39,7 +41,7 @@ function AppBar() {
             <Recent></Recent>
             <Starred></Starred>
             <Templates></Templates>
-            <Button variant="outlined">Create</Button>
+            <Button variant="outlined" startIcon={<LibraryAddIcon/>}>Create</Button>
           </Box>
         </Box>
 
