@@ -17,12 +17,13 @@ import ContentPaste from '@mui/icons-material/ContentPaste'
 import AddCardIcon from '@mui/icons-material/AddCard'
 import DragHandleIcon from '@mui/icons-material/DragHandle'
 import ListCards from './ListCards/ListCards'
-
+import { mapOrder } from '~/utils/sorts'
 function Column({ column }) {
   const [anchorEl, setAnchorEl] = useState(null)
   const open = Boolean(anchorEl)
   const handleClick = (event) => setAnchorEl(event.currentTarget)
   const handleClose = () => setAnchorEl(null)
+  const orderedCards = mapOrder(column?.cards, column?.cardOrderIds, '_id')
   return (
     <Box sx={{
       minWidth: '300px',
@@ -98,7 +99,7 @@ function Column({ column }) {
       </Box>
 
       { /*List Card*/}
-      <ListCards cards = {column?.cards}/>
+      <ListCards cards = {orderedCards}/>
 
       { /* Box Column Footer*/}
       <Box sx={{
