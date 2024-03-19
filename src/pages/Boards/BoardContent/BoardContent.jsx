@@ -1,7 +1,7 @@
 import ListColumns from './ListColumns/ListColumns'
 import Box from '@mui/material/Box'
 import { mapOrder } from '~/utils/sorts'
-import { useEffect, useState, useCallback, useRef } from 'react'
+import React, { useEffect, useState, useCallback, useRef } from 'react'
 import { arrayMove } from '@dnd-kit/sortable'
 import Column from './ListColumns/Column/Column'
 import Card from './ListColumns/Column/ListCards/Card/Card'
@@ -17,14 +17,16 @@ import {
   getFirstCollision,
   pointerWithin
 } from '@dnd-kit/core'
-import { cloneDeep } from 'lodash'
+import { cloneDeep, isEmpty } from 'lodash'
+import { generatePlaceholderCard } from '~/utils/formatters'
 
 const ACTIVE_DRAG_ITEM_TYPE = {
   COLUMN: 'ACTIVE_DRAG_ITEM_TYPE_COLUMN',
   CARD: 'ACTIVE_DRAG_ITEM_TYPE_CARD'
 }
 
-function BoardContent({ board }) {
+
+const BoardContent = React.memo( function BoardContent({ board }) {
 
   // const pointerSensor = useSensor(PointerSensor, { activationConstraint: { distance: 10 } })
 
@@ -80,7 +82,12 @@ function BoardContent({ board }) {
         // xoa' (loc.) ra card vua` duoc keo' tha? sang column khac
         nextActiveColumn.cards = nextActiveColumn.cards.filter(card => card._id !== activeDraggingCardId)
         // cap nhat lai mang cardOrderIds sau khi keo tha
-        nextActiveColumn.cardOrderIds = nextActiveColumn.cards.map(card => card._id)
+        if (isEmpty(nextActiveColumn?.cards)) {
+          nextActiveColumn.cards = [generatePlaceholderCard(nextActiveColumn)]
+        }
+        // console.log('🚀 ~ BoardContent ~ nextActiveColumn:', nextActiveColumn)
+        nextActiveColumn.cardOrderIds = nextActiveColumn?.cards.map(card => card._id)
+        // console.log('🚀 ~ BoardContent ~ nextActiveColumn:', nextActiveColumn)
       }
       // column moi sau khi beo tha
       if (nextOverColumn) {
@@ -92,9 +99,11 @@ function BoardContent({ board }) {
           0,
           { ...activeDraggingCardData, columnId: nextOverColumn._id }
         )
+        // xoa cardHolder di neu co
+        nextOverColumn.cards = nextOverColumn.cards.filter(card => card.FE_PlaceholderCard !== true)
         nextOverColumn.cardOrderIds = nextOverColumn.cards.map(card => card._id)
       }
-      // console.log('🚀 ~ nextColumns:', nextColumns)
+      // console.log('🚀 ~ BoardContent ~ nextColumns:', nextColumns)
       return nextColumns
     })
   }
@@ -139,6 +148,7 @@ function BoardContent({ board }) {
         activeDraggingCardId,
         activeDraggingCardData
       )
+
     }
   }
 
@@ -237,6 +247,7 @@ function BoardContent({ board }) {
     // tim overId tim duoc khi keo tha
     let overId = getFirstCollision(pointerIntersections, 'id')
     if (overId) {
+      console.log('🚀 ~ collisionDetectionStrategy ~ pointerIntersections:', pointerIntersections)
       const checkColumn = orderedColumns.find(column => column._id === overId)
 
       if (checkColumn) {
@@ -251,12 +262,13 @@ function BoardContent({ board }) {
       // console.log('🚀 ~ overId::2::', overId)
 
       lastOverId.current = overId
+      // console.log('🚀 ~ collisionDetectionStrategy ~ overId:', overId, ' ::pointerIntersections', pointerIntersections)
       return [{ id: overId }]
     }
     // If there are no collisions with the pointer, return rectangle intersections
+    // console.log('🚀 ~ lastOverId.current:', lastOverId.current)
     return lastOverId.current ? [{ id: lastOverId.current }] : []
   }, [activeDragItemType, orderedColumns])
-
 
   return (
     <DndContext
@@ -286,6 +298,6 @@ function BoardContent({ board }) {
       </Box>
     </DndContext >
   )
-}
+})
 
 export default BoardContent

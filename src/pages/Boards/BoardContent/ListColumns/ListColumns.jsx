@@ -19,7 +19,7 @@ function ListColumns({ columns }) {
         '&::-webkit-scrollbar-track ': { m: 2 }
       }}>
         { /* Box Column */}
-        { columns?.map((column) => <Column key = {column?._id} column = {column}/>) }
+        {columns?.map((column) => <Column key={column?._id} column={column} />)}
         <Box sx={{
           minWidth: '200px',
           maxWidth: '200px',
