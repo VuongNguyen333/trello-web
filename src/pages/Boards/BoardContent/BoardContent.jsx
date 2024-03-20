@@ -247,7 +247,6 @@ const BoardContent = React.memo( function BoardContent({ board }) {
     // tim overId tim duoc khi keo tha
     let overId = getFirstCollision(pointerIntersections, 'id')
     if (overId) {
-      console.log('🚀 ~ collisionDetectionStrategy ~ pointerIntersections:', pointerIntersections)
       const checkColumn = orderedColumns.find(column => column._id === overId)
 
       if (checkColumn) {
