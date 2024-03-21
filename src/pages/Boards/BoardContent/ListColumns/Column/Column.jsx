@@ -42,7 +42,6 @@ function Column({ column }) {
   const orderedCards = mapOrder(column?.cards, column?.cardOrderIds, '_id')
 
   const [openNewCardForm, setOpenNewCardForm] = useState(false)
-  const [searchValue, setSearchValue] = useState('')
   const toggleOpenNewCardForm = () => setOpenNewCardForm(!openNewCardForm)
 
   const [newCardTitle, setNewCardTitle] = useState('')
