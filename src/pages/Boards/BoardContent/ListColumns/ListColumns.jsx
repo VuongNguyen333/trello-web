@@ -1,21 +1,20 @@
+import { useState } from 'react'
+import { toast } from 'react-toastify'
 import Box from '@mui/material/Box'
 import Column from './Column/Column'
 import Button from '@mui/material/Button'
 import NoteAddIcon from '@mui/icons-material/NoteAdd'
 import { SortableContext, horizontalListSortingStrategy } from '@dnd-kit/sortable'
-import { useState } from 'react'
 import TextField from '@mui/material/TextField'
-import InputAdornment from '@mui/material/InputAdornment'
-import SearchIcon from '@mui/icons-material/Search'
 import CloseIcon from '@mui/icons-material/Close'
 function ListColumns({ columns }) {
   const [openNewColumnForm, setOpenNewColumnForm] = useState(false)
-  const [searchValue, setSearchValue] = useState('')
   const toggleOpenNewColumnForm = () => setOpenNewColumnForm(!openNewColumnForm)
 
   const [newColumnTitle, setNewColumnTitle] = useState('')
   const addNewColumn = () => {
     if (!newColumnTitle) {
+      toast.error('Please enter Column Title!')
       return
     }
     toggleOpenNewColumnForm()
@@ -105,9 +104,8 @@ function ListColumns({ columns }) {
               <CloseIcon
                 fontSize='small'
                 sx={{
-                  color: 'white',
-                  cursor: 'pointer',
-                  '&:hover': { color: (theme) => theme.palette.warning.light }
+                  color: (theme) => theme.palette.warning.light,
+                  cursor: 'pointer'
                 }}
                 onClick={toggleOpenNewColumnForm}
               />
