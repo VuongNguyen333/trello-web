@@ -28,7 +28,7 @@ const ACTIVE_DRAG_ITEM_TYPE = {
 }
 
 
-const BoardContent = React.memo( function BoardContent({ board }) {
+const BoardContent = React.memo( function BoardContent({ board, createNewColumn, createNewCard }) {
 
   // const pointerSensor = useSensor(PointerSensor, { activationConstraint: { distance: 10 } })
 
@@ -290,7 +290,11 @@ const BoardContent = React.memo( function BoardContent({ board }) {
         display: 'flex',
         p: '10px 0'
       }}>
-        <ListColumns columns={orderedColumns} />
+        <ListColumns
+          columns={orderedColumns}
+          createNewColumn={createNewColumn}
+          createNewCard={createNewCard}
+        />
         <DragOverlay dropAnimation={customDropAnimation}>
           {(!activeDragItemType) && null}
           {(activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.COLUMN) && <Column column={activeDragItemData} />}

@@ -8,3 +8,16 @@ export const fetchBoardDetailsAPI = async (boardId) => {
   // lay data qua property data cua axios
   return request.data
 }
+
+
+//Column
+export const createNewColumnAPI = async (newColumnData) => {
+  const request = await axios.post(`${API_ROOT}/v1/columns`, newColumnData)
+  return request.data
+}
+
+//Card
+export const createNewCardAPI = async (newCardData) => {
+  const request = await axios.post(`${API_ROOT}/v1/cards`, newCardData)
+  return request.data
+}
