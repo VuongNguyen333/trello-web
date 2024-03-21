@@ -7,8 +7,8 @@ import Column from './ListColumns/Column/Column'
 import Card from './ListColumns/Column/ListCards/Card/Card'
 import {
   DndContext,
-  MouseSensor,
-  TouchSensor,
+  // MouseSensor,
+  // TouchSensor,
   useSensor,
   useSensors,
   DragOverlay,
@@ -17,6 +17,8 @@ import {
   getFirstCollision,
   pointerWithin
 } from '@dnd-kit/core'
+import { MouseSensor, TouchSensor } from '~/customLibraries/DndKitSensors'
+
 import { cloneDeep, isEmpty } from 'lodash'
 import { generatePlaceholderCard } from '~/utils/formatters'
 
