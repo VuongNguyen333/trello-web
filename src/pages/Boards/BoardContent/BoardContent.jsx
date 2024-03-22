@@ -28,7 +28,7 @@ const ACTIVE_DRAG_ITEM_TYPE = {
 }
 
 
-const BoardContent = React.memo( function BoardContent({ board, createNewColumn, createNewCard }) {
+const BoardContent = React.memo(function BoardContent({ board, createNewColumn, createNewCard, moveColumns }) {
 
   // const pointerSensor = useSensor(PointerSensor, { activationConstraint: { distance: 10 } })
 
@@ -214,9 +214,9 @@ const BoardContent = React.memo( function BoardContent({ board, createNewColumn,
         const newColumnIndex = orderedColumns.findIndex(c => c._id === over.id)
 
         const dndOrderedColumns = arrayMove(orderedColumns, oldColumnIndex, newColumnIndex)
-        // const dndOrderedColumnsIds = dndOrderedColumns.map(c => c._id)
         // console.log('🚀 ~ handleDragEnd ~ dndOrderedColumns:', dndOrderedColumns)
         // console.log('🚀 ~ handleDragEnd ~ dndOrderedColumnsIds:', dndOrderedColumnsIds)
+        moveColumns(dndOrderedColumns)
         setOrderedColumns(dndOrderedColumns)
       }
     }
