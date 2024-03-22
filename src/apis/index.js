@@ -9,6 +9,12 @@ export const fetchBoardDetailsAPI = async (boardId) => {
   return request.data
 }
 
+export const updateBoardDetailsAPI = async (boardId, updateData) => {
+  const request = await axios.put(`${API_ROOT}/v1/boards/${boardId}`, updateData)
+  // lay data qua property data cua axios
+  return request.data
+}
+
 
 //Column
 export const createNewColumnAPI = async (newColumnData) => {
