@@ -14,6 +14,11 @@ export const updateBoardDetailsAPI = async (boardId, updateData) => {
   // lay data qua property data cua axios
   return request.data
 }
+export const moveCardToDiffColumnAPI = async (updateData) => {
+  const request = await axios.put(`${API_ROOT}/v1/boards/supports/moving_card`, updateData)
+  // lay data qua property data cua axios
+  return request.data
+}
 
 export const updateColumnDetailsAPI = async (columnId, updateData) => {
   const request = await axios.put(`${API_ROOT}/v1/columns/${columnId}`, updateData)
