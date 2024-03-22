@@ -27,7 +27,14 @@ const ACTIVE_DRAG_ITEM_TYPE = {
 }
 
 
-function BoardContent({ board, createNewColumn, createNewCard, moveColumns, moveCardInTheSameColumn }) {
+function BoardContent({
+  board,
+  createNewColumn,
+  createNewCard,
+  moveColumns,
+  moveCardInTheSameColumn,
+  moveCardToDiffColumn
+}) {
 
   // const pointerSensor = useSensor(PointerSensor, { activationConstraint: { distance: 10 } })
 
@@ -58,6 +65,7 @@ function BoardContent({ board, createNewColumn, createNewCard, moveColumns, move
     return orderedColumns.find(column => column?.cards?.map(card => card._id)?.includes(cardId))
   }
 
+  // func chung cho viec cap nhat lai state khi keo card giua 2 column khac nhau
   const moveCardBeetweenDifferentColumn = (
     overColumn,
     overCardId,
@@ -65,7 +73,8 @@ function BoardContent({ board, createNewColumn, createNewCard, moveColumns, move
     over,
     activeColumn,
     activeDraggingCardId,
-    activeDraggingCardData
+    activeDraggingCardData,
+    triggerFrom
   ) => {
     setOrderedColumns(prevColumns => {
       const overCardIndex = overColumn?.cards?.findIndex(card => card._id === overCardId)
@@ -102,8 +111,18 @@ function BoardContent({ board, createNewColumn, createNewCard, moveColumns, move
           { ...activeDraggingCardData, columnId: nextOverColumn._id }
         )
         // xoa cardHolder di neu co
-        nextOverColumn.cards = nextOverColumn.cards.filter(card => card.FE_PlaceholderCard !== true)
+        nextOverColumn.cards = nextOverColumn.cards.filter(card => !card.FE_PlaceholderCard)
         nextOverColumn.cardOrderIds = nextOverColumn.cards.map(card => card._id)
+      }
+      // chi call api khi keo tha xong chu ko call luc Over
+      // phai dung oldColumnWhenDraggingCard de fix bug khi dragOver, state da duoc cap nhat lai khien cho active Column tro thanh OverColumn
+      if (triggerFrom === 'handleDragEnd') {
+        moveCardToDiffColumn(
+          activeDraggingCardId,
+          oldColumnWhenDraggingCard._id,
+          nextOverColumn._id,
+          nextColumns
+        )
       }
       // console.log('🚀 ~ BoardContent ~ nextColumns:', nextColumns)
       return nextColumns
@@ -148,7 +167,8 @@ function BoardContent({ board, createNewColumn, createNewCard, moveColumns, move
         over,
         activeColumn,
         activeDraggingCardId,
-        activeDraggingCardData
+        activeDraggingCardData,
+        'handleDragOver'
       )
 
     }
@@ -181,7 +201,8 @@ function BoardContent({ board, createNewColumn, createNewCard, moveColumns, move
           over,
           activeColumn,
           activeDraggingCardId,
-          activeDraggingCardData
+          activeDraggingCardData,
+          'handleDragEnd'
         )
       } else {
         // Keo tha trong cung 1 column
