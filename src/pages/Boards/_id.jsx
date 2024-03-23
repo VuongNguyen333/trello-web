@@ -12,11 +12,13 @@ import {
   createNewColumnAPI,
   updateBoardDetailsAPI,
   updateColumnDetailsAPI,
-  moveCardToDiffColumnAPI
+  moveCardToDiffColumnAPI,
+  deleteColumnDetailsAPI
 } from '~/apis'
 import { generatePlaceholderCard } from '~/utils/formatters'
 import { isEmpty } from 'lodash'
 import { Box, Typography } from '@mui/material'
+import { toast } from 'react-toastify'
 function Board() {
   const [board, setBoard] = useState(null)
   useEffect(() => {
@@ -116,6 +118,16 @@ function Board() {
       nextCardOrderIds: dndOrderedColumns.find(c => c._id === nextColumnId)?.cardOrderIds
     })
   }
+  const deleteColumnDetails = (columnId) => {
+    const newBoard = { ...board }
+    newBoard.columns = newBoard.columns.filter(c => c._id !== columnId)
+    newBoard.columnOrderIds = newBoard.columnOrderIds.filter(c => c._id !== columnId)
+    setBoard(newBoard)
+    deleteColumnDetailsAPI(columnId).then(res => {
+      toast.success(res.deleteResult)
+    })
+  }
+
   if (!board) {
     return (
       <Box sx={{
@@ -142,6 +154,7 @@ function Board() {
         moveColumns={moveColumns}
         moveCardInTheSameColumn={moveCardInTheSameColumn}
         moveCardToDiffColumn={moveCardToDiffColumn}
+        deleteColumnDetails={deleteColumnDetails}
       ></BoardContent>
     </Container>
   )

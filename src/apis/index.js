@@ -25,6 +25,11 @@ export const updateColumnDetailsAPI = async (columnId, updateData) => {
   // lay data qua property data cua axios
   return request.data
 }
+export const deleteColumnDetailsAPI = async (columnId, updateData) => {
+  const request = await axios.delete(`${API_ROOT}/v1/columns/${columnId}`, updateData)
+  // lay data qua property data cua axios
+  return request.data
+}
 
 
 //Column
