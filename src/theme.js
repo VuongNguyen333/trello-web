@@ -61,10 +61,10 @@ const theme = extendTheme({
     MuiOutlinedInput: {
       styleOverrides: {
         root: {
-          fontSize: '0.875rem',
-          '& fieldset': { borderWidth: '0.5px !important' },
-          '&:hover fieldset': { borderWidth: '2px !important' },
-          '&.Mui-focused fieldset': { borderWidth: '2px !important' }
+          // fontSize: '0,9rem',
+          // '& fieldset': { borderWidth: '0.5px !important' },
+          // '&:hover fieldset': { borderWidth: '2px !important' },
+          // '&.Mui-focused fieldset': { borderWidth: '2px !important' }
         }
       }
     }

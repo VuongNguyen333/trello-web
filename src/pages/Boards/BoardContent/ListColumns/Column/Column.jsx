@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { toast } from 'react-toastify'
-import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Menu from '@mui/material/Menu'
@@ -59,6 +58,11 @@ function Column({ column, createNewCard, deleteColumnDetails }) {
     toggleOpenNewCardForm()
     setNewCardTitle('')
   }
+
+  const updateColumnTitle = () => {
+    
+  }
+
   const confirmDeleteColumn = useConfirm()
   const handleDeleteColumn = () => {
     confirmDeleteColumn({
@@ -101,13 +105,25 @@ function Column({ column, createNewCard, deleteColumnDetails }) {
           alignItems: 'center',
           justifyContent: 'space-between'
         }}>
-          <Typography variant='h6' sx={{
+          {/* <Typography variant='h6' sx={{
             fontSize: '1rem',
             fontWeight: 'bold',
             cursor: 'pointer'
           }}>
             {column?.title}
-          </Typography>
+          </Typography> */}
+          <TextField
+            id="outlined-helperText"
+            defaultValue = {column?.title}
+            size='small'
+            data-no-dnd='true'
+            onChange={(e) => updateColumnTitle(e.target.value)}
+            sx={{
+              '& fieldset': { borderWidth: '0px' },
+              // '&:hover fieldset': { borderWidth: '2px !important' },
+              '&.Mui-focused fieldset': { borderWidth: '2px !important' }
+            }}
+          />
           <Box>
             <Tooltip title="More options">
               <ExpandMoreIcon
