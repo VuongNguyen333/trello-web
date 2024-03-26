@@ -1,10 +1,10 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import ListColumns from './ListColumns/ListColumns'
-import Box from '@mui/material/Box'
-import { mapOrder } from '~/utils/sorts'
-import React, { useEffect, useState, useCallback, useRef } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
 import { arrayMove } from '@dnd-kit/sortable'
 import Column from './ListColumns/Column/Column'
 import Card from './ListColumns/Column/ListCards/Card/Card'
+import CircularProgress from '@mui/material/CircularProgress'
 import {
   DndContext,
   // MouseSensor,
@@ -21,14 +21,22 @@ import { MouseSensor, TouchSensor } from '~/customLibraries/DndKitSensors'
 
 import { cloneDeep, isEmpty } from 'lodash'
 import { generatePlaceholderCard } from '~/utils/formatters'
-
+import { Box, Typography } from '@mui/material'
 const ACTIVE_DRAG_ITEM_TYPE = {
   COLUMN: 'ACTIVE_DRAG_ITEM_TYPE_COLUMN',
   CARD: 'ACTIVE_DRAG_ITEM_TYPE_CARD'
 }
 
 
-const BoardContent = React.memo( function BoardContent({ board }) {
+function BoardContent({
+  board,
+  createNewColumn,
+  createNewCard,
+  moveColumns,
+  moveCardInTheSameColumn,
+  moveCardToDiffColumn,
+  deleteColumnDetails
+}) {
 
   // const pointerSensor = useSensor(PointerSensor, { activationConstraint: { distance: 10 } })
 
@@ -51,13 +59,15 @@ const BoardContent = React.memo( function BoardContent({ board }) {
   const lastOverId = useRef(null)
 
   useEffect(() => {
-    setOrderedColumns(mapOrder(board?.columns, board?.columnOrderIds, '_id'))
+    // column da duoc sap xep o component cha cao nhat
+    setOrderedColumns(board.columns)
   }, [board])
 
   const findColumnByCardId = (cardId) => {
     return orderedColumns.find(column => column?.cards?.map(card => card._id)?.includes(cardId))
   }
 
+  // func chung cho viec cap nhat lai state khi keo card giua 2 column khac nhau
   const moveCardBeetweenDifferentColumn = (
     overColumn,
     overCardId,
@@ -65,7 +75,8 @@ const BoardContent = React.memo( function BoardContent({ board }) {
     over,
     activeColumn,
     activeDraggingCardId,
-    activeDraggingCardData
+    activeDraggingCardData,
+    triggerFrom
   ) => {
     setOrderedColumns(prevColumns => {
       const overCardIndex = overColumn?.cards?.findIndex(card => card._id === overCardId)
@@ -102,8 +113,18 @@ const BoardContent = React.memo( function BoardContent({ board }) {
           { ...activeDraggingCardData, columnId: nextOverColumn._id }
         )
         // xoa cardHolder di neu co
-        nextOverColumn.cards = nextOverColumn.cards.filter(card => card.FE_PlaceholderCard !== true)
+        nextOverColumn.cards = nextOverColumn.cards.filter(card => !card.FE_PlaceholderCard)
         nextOverColumn.cardOrderIds = nextOverColumn.cards.map(card => card._id)
+      }
+      // chi call api khi keo tha xong chu ko call luc Over
+      // phai dung oldColumnWhenDraggingCard de fix bug khi dragOver, state da duoc cap nhat lai khien cho active Column tro thanh OverColumn
+      if (triggerFrom === 'handleDragEnd') {
+        moveCardToDiffColumn(
+          activeDraggingCardId,
+          oldColumnWhenDraggingCard._id,
+          nextOverColumn._id,
+          nextColumns
+        )
       }
       // console.log('🚀 ~ BoardContent ~ nextColumns:', nextColumns)
       return nextColumns
@@ -148,7 +169,8 @@ const BoardContent = React.memo( function BoardContent({ board }) {
         over,
         activeColumn,
         activeDraggingCardId,
-        activeDraggingCardData
+        activeDraggingCardData,
+        'handleDragOver'
       )
 
     }
@@ -181,7 +203,8 @@ const BoardContent = React.memo( function BoardContent({ board }) {
           over,
           activeColumn,
           activeDraggingCardId,
-          activeDraggingCardData
+          activeDraggingCardData,
+          'handleDragEnd'
         )
       } else {
         // Keo tha trong cung 1 column
@@ -192,6 +215,7 @@ const BoardContent = React.memo( function BoardContent({ board }) {
           const newCardIndex = oldColumnWhenDraggingCard?.cards.findIndex(c => c._id === overCardId)
 
           const dndOrderedCards = arrayMove(oldColumnWhenDraggingCard?.cards, oldCardIndex, newCardIndex)
+          const dndOrderedCardIds = dndOrderedCards.map(card => card._id)
           setOrderedColumns(prevColumns => {
             // Clone lai mang column roi cap nhat
             const nextColumns = cloneDeep(prevColumns)
@@ -199,9 +223,12 @@ const BoardContent = React.memo( function BoardContent({ board }) {
             // tim column dang keo tha
             const targetColumn = nextColumns.find(c => c._id === overColumn._id)
             targetColumn.cards = dndOrderedCards
-            targetColumn.cardOrderIds = dndOrderedCards.map(card => card._id)
+            targetColumn.cardOrderIds = dndOrderedCardIds
             return nextColumns
           })
+
+          // call ham`
+          moveCardInTheSameColumn(dndOrderedCards, dndOrderedCardIds, oldColumnWhenDraggingCard._id)
         }
       }
     }
@@ -214,10 +241,8 @@ const BoardContent = React.memo( function BoardContent({ board }) {
         const newColumnIndex = orderedColumns.findIndex(c => c._id === over.id)
 
         const dndOrderedColumns = arrayMove(orderedColumns, oldColumnIndex, newColumnIndex)
-        // const dndOrderedColumnsIds = dndOrderedColumns.map(c => c._id)
-        // console.log('🚀 ~ handleDragEnd ~ dndOrderedColumns:', dndOrderedColumns)
-        // console.log('🚀 ~ handleDragEnd ~ dndOrderedColumnsIds:', dndOrderedColumnsIds)
         setOrderedColumns(dndOrderedColumns)
+        moveColumns(dndOrderedColumns)
       }
     }
 
@@ -290,7 +315,12 @@ const BoardContent = React.memo( function BoardContent({ board }) {
         display: 'flex',
         p: '10px 0'
       }}>
-        <ListColumns columns={orderedColumns} />
+        <ListColumns
+          columns={orderedColumns}
+          createNewColumn={createNewColumn}
+          createNewCard={createNewCard}
+          deleteColumnDetails={deleteColumnDetails}
+        />
         <DragOverlay dropAnimation={customDropAnimation}>
           {(!activeDragItemType) && null}
           {(activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.COLUMN) && <Column column={activeDragItemData} />}
@@ -299,6 +329,6 @@ const BoardContent = React.memo( function BoardContent({ board }) {
       </Box>
     </DndContext >
   )
-})
+}
 
 export default BoardContent

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import Typography from '@mui/material/Typography'
+import { toast } from 'react-toastify'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Menu from '@mui/material/Menu'
@@ -19,14 +19,19 @@ import DragHandleIcon from '@mui/icons-material/DragHandle'
 import ListCards from './ListCards/ListCards'
 import TextField from '@mui/material/TextField'
 import CloseIcon from '@mui/icons-material/Close'
-import { mapOrder } from '~/utils/sorts'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-function Column({ column }) {
+import { useConfirm } from 'material-ui-confirm'
+import { useDispatch, useSelector } from 'react-redux'
+import { createNewCardRedux } from '~/redux/apiRequests'
+import { cloneDeep } from 'lodash'
+function Column({ column, deleteColumnDetails }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: column?._id,
     data: { ...column }
   })
+  const board = useSelector(state => state.board.board)
+  const dispatch = useDispatch()
   const dndKitColumnStyles = {
     touchAction: 'none', // danh cho sensor dang default
     transform: CSS.Translate.toString(transform),
@@ -39,19 +44,50 @@ function Column({ column }) {
   const open = Boolean(anchorEl)
   const handleClick = (event) => setAnchorEl(event.currentTarget)
   const handleClose = () => setAnchorEl(null)
-  const orderedCards = mapOrder(column?.cards, column?.cardOrderIds, '_id')
+  const orderedCards = column.cards
 
   const [openNewCardForm, setOpenNewCardForm] = useState(false)
-  const [searchValue, setSearchValue] = useState('')
   const toggleOpenNewCardForm = () => setOpenNewCardForm(!openNewCardForm)
 
   const [newCardTitle, setNewCardTitle] = useState('')
   const addNewCard = () => {
     if (!newCardTitle) {
+      toast.error('Please enter Card Title!', { position: 'bottom-right' })
       return
     }
+    const newCardData = {
+      title: newCardTitle,
+      columnId: column._id
+    }
+    const dataBoard = cloneDeep(board)
+    createNewCardRedux(dataBoard, newCardData, dispatch)
     toggleOpenNewCardForm()
     setNewCardTitle('')
+  }
+
+  const updateColumnTitle = () => {
+    return
+  }
+
+  const confirmDeleteColumn = useConfirm()
+  const handleDeleteColumn = () => {
+    confirmDeleteColumn({
+      title: 'Delete Column?',
+      description: 'This action will permanently delete your Column and its Cards! Are you sure?',
+      confirmationText: 'Confirm',
+      cancellationText: 'Cancel'
+      // allowClose: false,
+      // dialogProps: { maxWidth: 'xs' },
+      // cancellationButtonProps: { color: 'inherit' },
+      // confirmationButtonProps: { color: 'secondary', variant: 'outlined' },
+      // buttonOrder: ['confirm', 'cancel']
+    })
+      .then(() => {
+        deleteColumnDetails(column._id)
+      })
+      .catch(() => {
+        /* ... */
+      })
   }
 
   return (
@@ -75,13 +111,25 @@ function Column({ column }) {
           alignItems: 'center',
           justifyContent: 'space-between'
         }}>
-          <Typography variant='h6' sx={{
+          {/* <Typography variant='h6' sx={{
             fontSize: '1rem',
             fontWeight: 'bold',
             cursor: 'pointer'
           }}>
             {column?.title}
-          </Typography>
+          </Typography> */}
+          <TextField
+            id="outlined-helperText"
+            defaultValue={column?.title}
+            size='small'
+            data-no-dnd='true'
+            onChange={(e) => updateColumnTitle(e.target.value)}
+            sx={{
+              '& fieldset': { borderWidth: '0px' },
+              // '&:hover fieldset': { borderWidth: '2px !important' },
+              '&.Mui-focused fieldset': { borderWidth: '2px !important' }
+            }}
+          />
           <Box>
             <Tooltip title="More options">
               <ExpandMoreIcon
@@ -98,12 +146,21 @@ function Column({ column }) {
               anchorEl={anchorEl}
               open={open}
               onClose={handleClose}
+              onClick={handleClose}
               MenuListProps={{
                 'aria-labelledby': 'basic-column-dropdown'
               }}
             >
-              <MenuItem>
-                <ListItemIcon><AddCardIcon fontSize="small" /></ListItemIcon>
+              <MenuItem
+                onClick={toggleOpenNewCardForm}
+                sx={{
+                  '&:hover': {
+                    color: 'success.light',
+                    '& .add-card-icon': { color: 'success.light' }
+                  }
+                }}
+              >
+                <ListItemIcon><AddCardIcon className='add-card-icon' fontSize="small" /></ListItemIcon>
                 <ListItemText>Add new card</ListItemText>
               </MenuItem>
               <MenuItem>
@@ -119,8 +176,16 @@ function Column({ column }) {
                 <ListItemText>Paste</ListItemText>
               </MenuItem>
               <Divider />
-              <MenuItem>
-                <ListItemIcon><DeleteForeverIcon fontSize="small" /></ListItemIcon>
+              <MenuItem
+                onClick={handleDeleteColumn}
+                sx={{
+                  '&:hover': {
+                    color: 'warning.dark',
+                    '& .delete-forever-icon': { color: 'warning.dark' }
+                  }
+                }}
+              >
+                <ListItemIcon><DeleteForeverIcon className='delete-forever-icon' fontSize="small" /></ListItemIcon>
                 <ListItemText>Remove this column</ListItemText>
               </MenuItem>
               <MenuItem>
@@ -163,7 +228,7 @@ function Column({ column }) {
                 size='small'
                 variant='outlined'
                 autoFocus
-                data-no-dnd = 'true'
+                data-no-dnd='true'
                 value={newCardTitle}
                 onChange={(e) => setNewCardTitle(e.target.value)}
                 sx={{
@@ -187,17 +252,19 @@ function Column({ column }) {
                 <Button
                   onClick={addNewCard}
                   variant='contained' color='success' size='small'
-                  data-no-dnd = 'true'
+                  data-no-dnd='true'
                   sx={{
                     boxShadow: 'none',
                     border: '0.5px solid',
                     borderColor: (theme) => theme.palette.success.main,
                     '&:hover': { bgcolor: (theme) => theme.palette.success.main }
                   }}
-                >Add</Button>
+                >
+                  Add
+                </Button>
                 <CloseIcon
                   fontSize='small'
-                  data-no-dnd = 'true'
+                  data-no-dnd='true'
                   sx={{
                     color: (theme) => theme.palette.warning.light,
                     cursor: 'pointer'

@@ -1,23 +1,31 @@
+/* eslint-disable react-hooks/rules-of-hooks */
+import { useState, useEffect } from 'react'
+import { toast } from 'react-toastify'
 import Box from '@mui/material/Box'
 import Column from './Column/Column'
 import Button from '@mui/material/Button'
 import NoteAddIcon from '@mui/icons-material/NoteAdd'
 import { SortableContext, horizontalListSortingStrategy } from '@dnd-kit/sortable'
-import { useState } from 'react'
 import TextField from '@mui/material/TextField'
-import InputAdornment from '@mui/material/InputAdornment'
-import SearchIcon from '@mui/icons-material/Search'
 import CloseIcon from '@mui/icons-material/Close'
-function ListColumns({ columns }) {
+import CircularProgress from '@mui/material/CircularProgress'
+import { useDispatch, useSelector } from 'react-redux'
+import { Typography } from '@mui/material'
+function ListColumns({ columns, createNewColumn, createNewCard, deleteColumnDetails }) {
   const [openNewColumnForm, setOpenNewColumnForm] = useState(false)
-  const [searchValue, setSearchValue] = useState('')
   const toggleOpenNewColumnForm = () => setOpenNewColumnForm(!openNewColumnForm)
 
   const [newColumnTitle, setNewColumnTitle] = useState('')
   const addNewColumn = () => {
     if (!newColumnTitle) {
+      toast.error('Please enter Column Title!')
       return
     }
+    // Tao du lieu de goi API
+    const newColumnData = {
+      title: newColumnTitle
+    }
+    createNewColumn(newColumnData)
     toggleOpenNewColumnForm()
     setNewColumnTitle('')
   }
@@ -37,7 +45,12 @@ function ListColumns({ columns }) {
         '&::-webkit-scrollbar-track ': { m: 2 }
       }}>
         { /* Box Column */}
-        {columns?.map((column) => <Column key={column?._id} column={column} />)}
+        {columns?.map((column) => <Column
+          key={column?._id}
+          column={column}
+          // createNewCard={createNewCard}
+          deleteColumnDetails={deleteColumnDetails}
+        />)}
         {!openNewColumnForm
           ? <Box onClick={toggleOpenNewColumnForm} sx={{
             minWidth: '200px',
@@ -105,9 +118,8 @@ function ListColumns({ columns }) {
               <CloseIcon
                 fontSize='small'
                 sx={{
-                  color: 'white',
-                  cursor: 'pointer',
-                  '&:hover': { color: (theme) => theme.palette.warning.light }
+                  color: (theme) => theme.palette.warning.light,
+                  cursor: 'pointer'
                 }}
                 onClick={toggleOpenNewColumnForm}
               />
