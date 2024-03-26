@@ -11,7 +11,6 @@ export const fetchBoardDetails = createAsyncThunk(
   async () => {
     const request = await axios.get(`${API_ROOT}/v1/boards/${boardId}`)
     // lay data qua property data cua axios
-    console.log('🚀 ~ request:', request.data)
     request.data.columns = mapOrder(request.data.columns, request.data.columnOrderIds, '_id')
     request.data.columns.forEach(column => {
       if (isEmpty(column.cards)) {
@@ -21,7 +20,6 @@ export const fetchBoardDetails = createAsyncThunk(
         column.cards = mapOrder(column.cards, column.cardOrderIds, '_id')
       }
     })
-    console.log('🚀 ~ request.data:', request.data)
     return request.data
   }
 )

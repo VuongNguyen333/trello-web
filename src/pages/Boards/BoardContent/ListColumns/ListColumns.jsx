@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { toast } from 'react-toastify'
 import Box from '@mui/material/Box'
 import Column from './Column/Column'
@@ -8,14 +8,15 @@ import NoteAddIcon from '@mui/icons-material/NoteAdd'
 import { SortableContext, horizontalListSortingStrategy } from '@dnd-kit/sortable'
 import TextField from '@mui/material/TextField'
 import CloseIcon from '@mui/icons-material/Close'
-import CircularProgress from '@mui/material/CircularProgress'
 import { useDispatch, useSelector } from 'react-redux'
-import { Typography } from '@mui/material'
-function ListColumns({ columns, createNewColumn, createNewCard, deleteColumnDetails }) {
+import { createNewColumn } from '~/redux/apiRequests'
+function ListColumns({ columns }) {
   const [openNewColumnForm, setOpenNewColumnForm] = useState(false)
   const toggleOpenNewColumnForm = () => setOpenNewColumnForm(!openNewColumnForm)
 
   const [newColumnTitle, setNewColumnTitle] = useState('')
+  const board = useSelector(state => state.board.board)
+  const dispatch = useDispatch()
   const addNewColumn = () => {
     if (!newColumnTitle) {
       toast.error('Please enter Column Title!')
@@ -25,7 +26,7 @@ function ListColumns({ columns, createNewColumn, createNewCard, deleteColumnDeta
     const newColumnData = {
       title: newColumnTitle
     }
-    createNewColumn(newColumnData)
+    createNewColumn(board, newColumnData.title, dispatch)
     toggleOpenNewColumnForm()
     setNewColumnTitle('')
   }
@@ -48,8 +49,6 @@ function ListColumns({ columns, createNewColumn, createNewCard, deleteColumnDeta
         {columns?.map((column) => <Column
           key={column?._id}
           column={column}
-          // createNewCard={createNewCard}
-          deleteColumnDetails={deleteColumnDetails}
         />)}
         {!openNewColumnForm
           ? <Box onClick={toggleOpenNewColumnForm} sx={{

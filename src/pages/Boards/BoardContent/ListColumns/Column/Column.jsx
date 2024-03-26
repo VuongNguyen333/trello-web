@@ -23,9 +23,9 @@ import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { useConfirm } from 'material-ui-confirm'
 import { useDispatch, useSelector } from 'react-redux'
-import { createNewCardRedux } from '~/redux/apiRequests'
+import { createNewCardRedux, removeColumn } from '~/redux/apiRequests'
 import { cloneDeep } from 'lodash'
-function Column({ column, deleteColumnDetails }) {
+function Column({ column }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: column?._id,
     data: { ...column }
@@ -83,7 +83,8 @@ function Column({ column, deleteColumnDetails }) {
       // buttonOrder: ['confirm', 'cancel']
     })
       .then(() => {
-        deleteColumnDetails(column._id)
+        const dataBoard = cloneDeep(board)
+        removeColumn(dataBoard, column._id, dispatch)
       })
       .catch(() => {
         /* ... */
