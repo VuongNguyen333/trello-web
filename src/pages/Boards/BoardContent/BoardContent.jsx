@@ -1,9 +1,14 @@
-import ListColumns from './ListColumns/ListColumns'
-import Box from '@mui/material/Box'
+/* eslint-disable react-hooks/rules-of-hooks */
+import { MouseSensor, TouchSensor } from '~/customLibraries/DndKitSensors'
 import { useEffect, useState, useCallback, useRef } from 'react'
-import { arrayMove } from '@dnd-kit/sortable'
-import Column from './ListColumns/Column/Column'
+import { generatePlaceholderCard } from '~/utils/formatters'
 import Card from './ListColumns/Column/ListCards/Card/Card'
+import ListColumns from './ListColumns/ListColumns'
+import { moveColumns } from '~/redux/apiRequests'
+import Column from './ListColumns/Column/Column'
+import { arrayMove } from '@dnd-kit/sortable'
+import { cloneDeep, isEmpty } from 'lodash'
+import { Box } from '@mui/material'
 import {
   DndContext,
   // MouseSensor,
@@ -16,10 +21,7 @@ import {
   getFirstCollision,
   pointerWithin
 } from '@dnd-kit/core'
-import { MouseSensor, TouchSensor } from '~/customLibraries/DndKitSensors'
-
-import { cloneDeep, isEmpty } from 'lodash'
-import { generatePlaceholderCard } from '~/utils/formatters'
+import { useDispatch, useSelector } from 'react-redux'
 
 const ACTIVE_DRAG_ITEM_TYPE = {
   COLUMN: 'ACTIVE_DRAG_ITEM_TYPE_COLUMN',
@@ -28,13 +30,8 @@ const ACTIVE_DRAG_ITEM_TYPE = {
 
 
 function BoardContent({
-  board,
-  createNewColumn,
-  createNewCard,
-  moveColumns,
   moveCardInTheSameColumn,
-  moveCardToDiffColumn,
-  deleteColumnDetails
+  moveCardToDiffColumn
 }) {
 
   // const pointerSensor = useSensor(PointerSensor, { activationConstraint: { distance: 10 } })
@@ -54,6 +51,8 @@ function BoardContent({
   const [activeDragItemData, setActiveDragItemData] = useState(null)
   const [oldColumnWhenDraggingCard, setOldColumnWhenDraggingCard] = useState(null)
 
+  const board = useSelector(state => state.board.board)
+  const dispatch = useDispatch()
   //diem va cham cuoi cung
   const lastOverId = useRef(null)
 
@@ -241,7 +240,7 @@ function BoardContent({
 
         const dndOrderedColumns = arrayMove(orderedColumns, oldColumnIndex, newColumnIndex)
         setOrderedColumns(dndOrderedColumns)
-        moveColumns(dndOrderedColumns)
+        moveColumns(board, dndOrderedColumns, dispatch)
       }
     }
 
@@ -316,9 +315,6 @@ function BoardContent({
       }}>
         <ListColumns
           columns={orderedColumns}
-          createNewColumn={createNewColumn}
-          createNewCard={createNewCard}
-          deleteColumnDetails={deleteColumnDetails}
         />
         <DragOverlay dropAnimation={customDropAnimation}>
           {(!activeDragItemType) && null}
