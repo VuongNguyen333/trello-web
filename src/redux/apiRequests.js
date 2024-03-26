@@ -3,9 +3,11 @@ import {
   createNewColumnAPI,
   createNewCardAPI,
   deleteColumnDetailsAPI,
-  updateBoardDetailsAPI
+  updateBoardDetailsAPI,
+  updateColumnDetailsAPI,
+  moveCardToDiffColumnAPI
 } from '~/apis/index'
-import { clone, cloneDeep, isEmpty } from 'lodash'
+import { cloneDeep, isEmpty } from 'lodash'
 import { toast } from 'react-toastify'
 import { mapOrder } from '~/utils/sorts'
 import { generatePlaceholderCard } from '~/utils/formatters'
@@ -47,7 +49,6 @@ export const createNewCardRedux = async (board, payload, dispatch) => {
         columnToUpdate.cardOrderIds.push(newCard._id)
       }
     }
-    console.log('🚀 ~ createNewCardRedux ~ board:', board)
     dispatch(getSuccess(newBoard))
   } catch (error) {
     dispatch(getError())
@@ -94,6 +95,48 @@ export const moveColumns = async (board, dndOrderedColumns, dispatch) => {
     newBoard.columns = dndOrderedColumns
     newBoard.columnOrderIds = dndOrderedColumnsIds
     updateBoardDetailsAPI(board._id, { columnOrderIds: dndOrderedColumnsIds })
+    dispatch(getSuccess(newBoard))
+  } catch (error) {
+    dispatch(getError())
+  }
+}
+
+export const moveCardInColumn = async (board, dndOrderedCards, dndOrderedCardIds, columnId, dispatch) => {
+  dispatch(getStart())
+  try {
+    const newBoard = cloneDeep(board)
+    const columnToUpdate = newBoard.columns.find(column => column._id === columnId)
+    if (columnToUpdate) {
+      columnToUpdate.cards = dndOrderedCards
+      columnToUpdate.cardOrderIds = dndOrderedCardIds
+    }
+    updateColumnDetailsAPI(columnId, { cardOrderIds: dndOrderedCardIds })
+    dispatch(getSuccess(newBoard))
+  } catch (error) {
+    dispatch(getError())
+  }
+}
+// B1: cap nhat activeCardOrderIds
+// B2: cap nhat overCardOrderIds
+// B3: cap nhat lai columnId cua activeCard
+export const moveCardToDiffColumn = async (board, currentCardId, prevColumnId, nextColumnId, dndOrderedColumns, dispatch) => {
+  dispatch(getStart())
+  try {
+    const dndOrderedColumnsIds = dndOrderedColumns.map(c => c._id)
+    const newBoard = cloneDeep(board)
+    newBoard.columns = dndOrderedColumns
+    newBoard.columnOrderIds = dndOrderedColumnsIds
+
+    // call api
+    let prevCardOrderIds = dndOrderedColumns.find(c => c._id === prevColumnId)?.cardOrderIds
+    if (prevCardOrderIds[0].includes('placeholder-card')) prevCardOrderIds = []
+    moveCardToDiffColumnAPI({
+      currentCardId,
+      prevColumnId,
+      prevCardOrderIds,
+      nextColumnId,
+      nextCardOrderIds: dndOrderedColumns.find(c => c._id === nextColumnId)?.cardOrderIds
+    })
     dispatch(getSuccess(newBoard))
   } catch (error) {
     dispatch(getError())

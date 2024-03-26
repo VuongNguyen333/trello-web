@@ -5,11 +5,6 @@ import BoardBar from './BoardBar/BoardBar'
 import BoardContent from './BoardContent/BoardContent'
 import { useEffect } from 'react'
 import CircularProgress from '@mui/material/CircularProgress'
-import {
-  updateColumnDetailsAPI,
-  moveCardToDiffColumnAPI
-} from '~/apis'
-import { cloneDeep } from 'lodash'
 import { Box, Typography } from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux'
 import { fetchBoardDetails } from '~/redux/slice/boardSlice'
@@ -42,59 +37,12 @@ function Board() {
     )
   }
 
-  // const moveColumns = (dndOrderedColumns) => {
-  //   const dndOrderedColumnsIds = dndOrderedColumns.map(c => c._id)
-  //   const newBoard = cloneDeep(board)
-  //   newBoard.columns = dndOrderedColumns
-  //   newBoard.columnOrderIds = dndOrderedColumnsIds
-  //   // setBoard(newBoard)
-
-  //   // call api
-  //   updateBoardDetailsAPI(newBoard._id, { columnOrderIds: dndOrderedColumnsIds })
-  // }
-
-  const moveCardInTheSameColumn = (dndOrderedCards, dndOrderedCardIds, columnId) => {
-    // update Ui/ux
-    const newBoard = cloneDeep(board)
-    const columnToUpdate = newBoard.columns.find(column => column._id === columnId)
-    if (columnToUpdate) {
-      columnToUpdate.cards = dndOrderedCards
-      columnToUpdate.cardOrderIds = dndOrderedCardIds
-    }
-    // setBoard(newBoard)
-    //call api
-    updateColumnDetailsAPI(columnId, { cardOrderIds: dndOrderedCardIds })
-
-  }
-  // B1: cap nhat activeCardOrderIds
-  // B2: cap nhat overCardOrderIds
-  // B3: cap nhat lai columnId cua activeCard
-  const moveCardToDiffColumn = (currentCardId, prevColumnId, nextColumnId, dndOrderedColumns) => {
-    const dndOrderedColumnsIds = dndOrderedColumns.map(c => c._id)
-    const newBoard = cloneDeep(board)
-    newBoard.columns = dndOrderedColumns
-    newBoard.columnOrderIds = dndOrderedColumnsIds
-    // setBoard(newBoard)
-
-    // call api
-    let prevCardOrderIds = dndOrderedColumns.find(c => c._id === prevColumnId)?.cardOrderIds
-    if (prevCardOrderIds[0].includes('placeholder-card')) prevCardOrderIds = []
-    moveCardToDiffColumnAPI({
-      currentCardId,
-      prevColumnId,
-      prevCardOrderIds,
-      nextColumnId,
-      nextCardOrderIds: dndOrderedColumns.find(c => c._id === nextColumnId)?.cardOrderIds
-    })
-  }
   return (
     <Container disableGutters maxWidth={false} sx={{ height: '100vh' }}>
       <AppBar></AppBar>
       <BoardBar board={board}></BoardBar>
       <BoardContent
         board={board}
-        moveCardInTheSameColumn={moveCardInTheSameColumn}
-        moveCardToDiffColumn={moveCardToDiffColumn}
       ></BoardContent>
     </Container>
   )
