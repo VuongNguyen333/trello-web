@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback, useRef } from 'react'
 import { generatePlaceholderCard } from '~/utils/formatters'
 import Card from './ListColumns/Column/ListCards/Card/Card'
 import ListColumns from './ListColumns/ListColumns'
-import { moveColumns } from '~/redux/apiRequests'
+import { moveColumns, moveCardInColumn, moveCardToDiffColumn } from '~/redux/apiRequests'
 import Column from './ListColumns/Column/Column'
 import { arrayMove } from '@dnd-kit/sortable'
 import { cloneDeep, isEmpty } from 'lodash'
@@ -29,10 +29,7 @@ const ACTIVE_DRAG_ITEM_TYPE = {
 }
 
 
-function BoardContent({
-  moveCardInTheSameColumn,
-  moveCardToDiffColumn
-}) {
+function BoardContent() {
 
   // const pointerSensor = useSensor(PointerSensor, { activationConstraint: { distance: 10 } })
 
@@ -118,13 +115,14 @@ function BoardContent({
       // phai dung oldColumnWhenDraggingCard de fix bug khi dragOver, state da duoc cap nhat lai khien cho active Column tro thanh OverColumn
       if (triggerFrom === 'handleDragEnd') {
         moveCardToDiffColumn(
+          board,
           activeDraggingCardId,
           oldColumnWhenDraggingCard._id,
           nextOverColumn._id,
-          nextColumns
+          nextColumns,
+          dispatch
         )
       }
-      // console.log('🚀 ~ BoardContent ~ nextColumns:', nextColumns)
       return nextColumns
     })
   }
@@ -226,7 +224,7 @@ function BoardContent({
           })
 
           // call ham`
-          moveCardInTheSameColumn(dndOrderedCards, dndOrderedCardIds, oldColumnWhenDraggingCard._id)
+          moveCardInColumn(board, dndOrderedCards, dndOrderedCardIds, oldColumnWhenDraggingCard._id, dispatch)
         }
       }
     }
