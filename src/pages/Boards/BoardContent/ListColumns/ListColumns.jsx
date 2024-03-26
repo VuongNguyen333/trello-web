@@ -1,4 +1,5 @@
-import { useState } from 'react'
+/* eslint-disable react-hooks/rules-of-hooks */
+import { useState, useEffect } from 'react'
 import { toast } from 'react-toastify'
 import Box from '@mui/material/Box'
 import Column from './Column/Column'
@@ -7,6 +8,9 @@ import NoteAddIcon from '@mui/icons-material/NoteAdd'
 import { SortableContext, horizontalListSortingStrategy } from '@dnd-kit/sortable'
 import TextField from '@mui/material/TextField'
 import CloseIcon from '@mui/icons-material/Close'
+import CircularProgress from '@mui/material/CircularProgress'
+import { useDispatch, useSelector } from 'react-redux'
+import { Typography } from '@mui/material'
 function ListColumns({ columns, createNewColumn, createNewCard, deleteColumnDetails }) {
   const [openNewColumnForm, setOpenNewColumnForm] = useState(false)
   const toggleOpenNewColumnForm = () => setOpenNewColumnForm(!openNewColumnForm)
@@ -21,7 +25,6 @@ function ListColumns({ columns, createNewColumn, createNewCard, deleteColumnDeta
     const newColumnData = {
       title: newColumnTitle
     }
-
     createNewColumn(newColumnData)
     toggleOpenNewColumnForm()
     setNewColumnTitle('')
@@ -45,7 +48,7 @@ function ListColumns({ columns, createNewColumn, createNewCard, deleteColumnDeta
         {columns?.map((column) => <Column
           key={column?._id}
           column={column}
-          createNewCard={createNewCard}
+          // createNewCard={createNewCard}
           deleteColumnDetails={deleteColumnDetails}
         />)}
         {!openNewColumnForm

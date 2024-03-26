@@ -22,11 +22,16 @@ import CloseIcon from '@mui/icons-material/Close'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { useConfirm } from 'material-ui-confirm'
-function Column({ column, createNewCard, deleteColumnDetails }) {
+import { useDispatch, useSelector } from 'react-redux'
+import { createNewCardRedux } from '~/redux/apiRequests'
+import { cloneDeep } from 'lodash'
+function Column({ column, deleteColumnDetails }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: column?._id,
     data: { ...column }
   })
+  const board = useSelector(state => state.board.board)
+  const dispatch = useDispatch()
   const dndKitColumnStyles = {
     touchAction: 'none', // danh cho sensor dang default
     transform: CSS.Translate.toString(transform),
@@ -54,13 +59,14 @@ function Column({ column, createNewCard, deleteColumnDetails }) {
       title: newCardTitle,
       columnId: column._id
     }
-    createNewCard(newCardData)
+    const dataBoard = cloneDeep(board)
+    createNewCardRedux(dataBoard, newCardData, dispatch)
     toggleOpenNewCardForm()
     setNewCardTitle('')
   }
 
   const updateColumnTitle = () => {
-    
+    return
   }
 
   const confirmDeleteColumn = useConfirm()
@@ -114,7 +120,7 @@ function Column({ column, createNewCard, deleteColumnDetails }) {
           </Typography> */}
           <TextField
             id="outlined-helperText"
-            defaultValue = {column?.title}
+            defaultValue={column?.title}
             size='small'
             data-no-dnd='true'
             onChange={(e) => updateColumnTitle(e.target.value)}
@@ -253,7 +259,9 @@ function Column({ column, createNewCard, deleteColumnDetails }) {
                     borderColor: (theme) => theme.palette.success.main,
                     '&:hover': { bgcolor: (theme) => theme.palette.success.main }
                   }}
-                >Add</Button>
+                >
+                  Add
+                </Button>
                 <CloseIcon
                   fontSize='small'
                   data-no-dnd='true'

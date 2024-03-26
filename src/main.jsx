@@ -9,6 +9,8 @@ import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 // cau hinh MUI dialog
 import { ConfirmProvider } from 'material-ui-confirm'
+import { Provider } from 'react-redux'
+import { store } from './redux/store.js'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <>
@@ -21,7 +23,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         buttonOrder: ['confirm', 'cancel']
       }}>
         <CssBaseline />
-        <App />
+        <Provider store={store}>
+          <App />
+        </Provider>
         <ToastContainer theme="colored" position="bottom-left" />
       </ConfirmProvider>
     </CssVarsProvider>
