@@ -51,6 +51,9 @@ export const createNewCardRedux = async (board, payload, dispatch) => {
     }
     dispatch(getSuccess(newBoard))
   } catch (error) {
+    if (error.response.status === 422) {
+      toast.error('Title Card length must be at least 3 characters long')
+    }
     dispatch(getError())
   }
 }
@@ -83,6 +86,9 @@ export const createNewColumn = async (board, columnTitle, dispatch) => {
     newBoard.columnOrderIds.push(createdColumn._id)
     dispatch(getSuccess(newBoard))
   } catch (error) {
+    if (error.response.status === 422) {
+      toast.error('Title Column length must be at least 3 characters long')
+    }
     dispatch(getError())
   }
 }
