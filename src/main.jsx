@@ -1,8 +1,8 @@
 import ReactDOM from 'react-dom/client'
+import CssBaseline from '@mui/material/CssBaseline'
 import App from './App.jsx'
 import './index.css'
 import theme from './theme'
-import CssBaseline from '@mui/material/CssBaseline'
 import { Experimental_CssVarsProvider as CssVarsProvider } from '@mui/material/styles'
 // cau hinh react toastify
 import { ToastContainer } from 'react-toastify'
@@ -11,6 +11,7 @@ import 'react-toastify/dist/ReactToastify.css'
 import { ConfirmProvider } from 'material-ui-confirm'
 import { Provider } from 'react-redux'
 import { store } from './redux/store.js'
+import { BrowserRouter } from 'react-router-dom'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <>
@@ -24,7 +25,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       }}>
         <CssBaseline />
         <Provider store={store}>
-          <App />
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
         </Provider>
         <ToastContainer theme="colored" position="bottom-left" />
       </ConfirmProvider>
