@@ -3,9 +3,17 @@ import Box from '@mui/material/Box'
 import React, { useState } from 'react'
 import loginImage from '~/assets/login-image1.jpg'
 import SvgIcon from '@mui/material/SvgIcon'
-import { Container, Typography, TextField, Button } from '@mui/material'
-import SecurityIcon from '@mui/icons-material/Security'
+import Container from '@mui/material/Container'
+import Typography from '@mui/material/Typography'
+import TextField from '@mui/material/TextField'
+import Button from '@mui/material/Button'
+import InputAdornment from '@mui/material/InputAdornment'
+import IconButton from '@mui/material/IconButton'
+import VisibilityIcon from '@mui/icons-material/Visibility'
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff'
+import KeyIcon from '@mui/icons-material/Key'
 import { ReactComponent as TrelloIcon } from '~/assets/trello.svg'
+import SecurityIcon from '@mui/icons-material/Security'
 import Link from '@mui/material/Link'
 import { useNavigate } from 'react-router-dom'
 function RegisterPage() {
@@ -33,41 +41,30 @@ function RegisterPage() {
   const [isValidPass, setIsValidPass] = useState(true)
   const [msgEmail, setMsgEmail] = useState('')
   const [msgPass, setMsgPass] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
 
   const handleEmailChange = (event) => {
     const tmpEmail = event.target.value
     setEmail(tmpEmail)
     const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(tmpEmail)
-    if (tmpEmail === null) {
-      setIsValidEmail(false)
-      setMsgEmail('❌ Email is required.')
-    }
-    else {
-      if (isValidEmail) {
+    if (isValidEmail) {
       // Xử lý logic khi email hợp lệ
-        setIsValidEmail(true)
-      } else {
-        setIsValidEmail(false)
-        setMsgEmail('❌ Email is invalid. VD: abc@gmail.com')
-      }
+      setIsValidEmail(true)
+    } else {
+      setIsValidEmail(false)
+      setMsgEmail('❌ Email is invalid. VD: abc@gmail.com')
     }
   }
   const handlePassChange = (event) => {
     const tmpPass = event.target.value
     setPassword(tmpPass)
     const isValidPass = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/.test(tmpPass)
-    if (tmpPass === null) {
-      setIsValidPass(false)
-      setMsgPass('❌ Password is required.')
-    }
-    else {
-      if (isValidPass) {
+    if (isValidPass) {
       // Xử lý logic khi email hợp lệ
-        setIsValidPass(true)
-      } else {
-        setIsValidPass(false)
-        setMsgPass('❌ Password at least 1 letter, a number, at least 8 characters.')
-      }
+      setIsValidPass(true)
+    } else {
+      setIsValidPass(false)
+      setMsgPass('❌ Password at least 1 letter, a number, at least 8 characters.')
     }
   }
 
@@ -82,7 +79,7 @@ function RegisterPage() {
     }
     else {
       if (isValidEmail) {
-      // Xử lý logic khi email hợp lệ
+        // Xử lý logic khi email hợp lệ
         setIsValidEmail(true)
       } else {
         setIsValidEmail(false)
@@ -96,13 +93,17 @@ function RegisterPage() {
     }
     else {
       if (isValidPass) {
-      // Xử lý logic khi email hợp lệ
+        // Xử lý logic khi email hợp lệ
         setIsValidPass(true)
       } else {
         setIsValidPass(false)
         setMsgPass('❌ Password at least 1 letter, a number, at least 8 characters.')
       }
     }
+  }
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword)
   }
 
   const styleBoxIcon = {
@@ -145,8 +146,8 @@ function RegisterPage() {
                 alignItems: 'center',
                 color: 'white'
               }}
-                bgcolor='#1976d2'
-                fontSize='small'
+              bgcolor='#1976d2'
+              fontSize='small'
               />
             </Box>
             <Box bgcolor='#1976d2' sx={styleBoxIcon}>
@@ -188,13 +189,22 @@ function RegisterPage() {
             />
             <TextField
               label="Enter Password"
-              type="Enter Password"
-              size='small'
-              sx={styleTextField}
+              type={showPassword ? 'text' : 'password'}
+              size="small"
               value={password}
               onChange={handlePassChange}
               error={!isValidPass}
-              helperText={!isValidPass ? `${msgPass}` : null}
+              helperText={!isValidPass ? msgPass : null}
+              sx={styleTextField}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={togglePasswordVisibility} size='small'>
+                      {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                    </IconButton>
+                  </InputAdornment>
+                )
+              }}
             />
             <TextField
               label="Confirm Password"

@@ -5,10 +5,23 @@ import React, { useState } from 'react'
 import loginImage from '~/assets/login-image1.jpg'
 import SvgIcon from '@mui/material/SvgIcon'
 import { Container, Typography, TextField, Button } from '@mui/material'
+import InputAdornment from '@mui/material/InputAdornment'
+import IconButton from '@mui/material/IconButton'
+import VisibilityIcon from '@mui/icons-material/Visibility'
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff'
 import SecurityIcon from '@mui/icons-material/Security'
 import { ReactComponent as TrelloIcon } from '~/assets/trello.svg'
 import Link from '@mui/material/Link'
 import { useNavigate } from 'react-router-dom'
+import { ThemeProvider } from '@emotion/react'
+import { createTheme } from '@mui/material/styles';
+
+// Tạo chủ đề cho light mode
+const lightTheme = createTheme({
+  palette: {
+    mode: 'light' // Chế độ sáng
+  }
+})
 function LoginPage() {
   const styleTextField = {
     display: 'flex',
@@ -41,6 +54,7 @@ function LoginPage() {
   const [isValidEmail, setIsValidEmail] = useState(true)
   const [msgEmail, setMsgEmail] = useState('')
   const navigate = useNavigate()
+  const [showPassword, setShowPassword] = useState(false)
 
   const handleEmailChange = (event) => {
     const tmpEmail = event.target.value
@@ -52,7 +66,7 @@ function LoginPage() {
     }
     else {
       if (isValidEmail) {
-      // Xử lý logic khi email hợp lệ
+        // Xử lý logic khi email hợp lệ
         setIsValidEmail(true)
       } else {
         setIsValidEmail(false)
@@ -80,120 +94,136 @@ function LoginPage() {
       }
     }
   }
-  return (
-    <div style={{
-      backgroundImage: `url(${loginImage})`, // Sử dụng biến loginImage
-      backgroundSize: 'cover',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      height: '100vh',
-      width: '100%'
 
-    }}>
-      <Container
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center'
-        }}
-      >
-        <Box
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword)
+  }
+  return (
+    <ThemeProvider theme={lightTheme}>
+      <div style={{
+        backgroundImage: `url(${loginImage})`, // Sử dụng biến loginImage
+        backgroundSize: 'cover',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '100vh',
+        width: '100%'
+
+      }}>
+        <Container
           sx={{
-            backgroundColor: 'white',
-            borderRadius: '15px'
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
           }}
         >
-          <Box sx={{ justifyContent: 'center', display: 'flex', p: 1 }}>
-            <Box bgcolor='#1976d2' sx={styleBoxIcon} >
-              <SecurityIcon sx={{
-                display: 'flex',
-                alignItems: 'center',
-                color: 'white'
-              }}
-              bgcolor='#1976d2'
-              fontSize='small'
-              />
-            </Box>
-            <Box bgcolor='#1976d2' sx={styleBoxIcon}>
-              <SvgIcon
-                component={TrelloIcon}
-                inheritViewbox
-                sx={{
-                  color: 'white',
-                  display: 'flex',
-                  alignItems: 'center'
-
-                }}
-                fontSize='small'
-              >
-              </SvgIcon>
-            </Box>
-          </Box>
-          <Typography
-            variant='h6'
-            gutterBottom
+          <Box
             sx={{
-              display: 'flex',
-              justifyContent: 'center',
-              mb: '15px', color: '#1976d2'
+              backgroundColor: 'white',
+              borderRadius: '15px'
             }}
           >
-            Login to your account
-          </Typography>
-          <form onSubmit={handleSubmit}>
-            <TextField
-              label="Username..."
-              sx={styleTextField}
-              size='small'
-              value={email}
-              onChange={handleEmailChange}
-              error={!isValidEmail}
-              helperText={!isValidEmail ? `${msgEmail}` : null}
-            />
-            <TextField
-              label="Password"
-              type="password"
-              size='small'
-              sx={styleTextField}
-            />
             <Box sx={{ justifyContent: 'center', display: 'flex', p: 1 }}>
-              <Button
-                type='submit'
-                variant="contained"
-                sx={{
+              <Box bgcolor='#1976d2' sx={styleBoxIcon} >
+                <SecurityIcon sx={{
+                  display: 'flex',
                   alignItems: 'center',
-                  justifyItems: 'center',
-                  width: '300px',
-                  bgcolor: '#1976d2',
-                  '&:hover': { bgcolor: '#1976d2' }
+                  color: 'white'
                 }}
-              >
-                Login
-              </Button>
+                bgcolor='#1976d2'
+                fontSize='small'
+                />
+              </Box>
+              <Box bgcolor='#1976d2' sx={styleBoxIcon}>
+                <SvgIcon
+                  component={TrelloIcon}
+                  inheritViewbox
+                  sx={{
+                    color: 'white',
+                    display: 'flex',
+                    alignItems: 'center'
+
+                  }}
+                  fontSize='small'
+                >
+                </SvgIcon>
+              </Box>
             </Box>
-          </form>
-          <Box sx={{ justifyContent: 'center', display: 'flex', p: 1 }}>
-            <Typography > Don't have an account?</Typography>
-          </Box>
-          <Box sx={{ justifyContent: 'center', display: 'flex', p: 1 }}>
-            <Link
-              onClick={() => {
-                navigate('/register', { replace: true })
-              }}
-              // href='/register'
-              type = 'submit'
-              underline="hover"
+            <Typography
+              variant='h6'
+              gutterBottom
               sx={{
-                '&:hover ': { color: '#29ADB2', cursor: 'pointer' }
+                display: 'flex',
+                justifyContent: 'center',
+                mb: '15px', color: '#1976d2'
               }}
             >
-              {'Create an account'}
-            </Link>
+              Login to your account
+            </Typography>
+            <form onSubmit={handleSubmit}>
+              <TextField
+                label="Username..."
+                sx={styleTextField}
+                size='small'
+                value={email}
+                onChange={handleEmailChange}
+                error={!isValidEmail}
+                helperText={!isValidEmail ? `${msgEmail}` : null}
+              />
+              <TextField
+                label="Password"
+                type= {showPassword ? 'text' : 'password' }
+                size='small'
+                sx={styleTextField}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton onClick={togglePasswordVisibility} size='small'>
+                        {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                      </IconButton>
+                    </InputAdornment>
+                  )
+                }}
+              />
+              <Box sx={{ justifyContent: 'center', display: 'flex', p: 1 }}>
+                <Button
+                  type='submit'
+                  variant="contained"
+                  sx={{
+                    alignItems: 'center',
+                    justifyItems: 'center',
+                    width: '300px',
+                    bgcolor: '#1976d2',
+                    '&:hover': { bgcolor: '#1976d2' }
+                  }}
+                >
+                  Login
+                </Button>
+              </Box>
+            </form>
+            <Box sx={{ justifyContent: 'center', display: 'flex', p: 1 }}>
+              <Typography > Don't have an account?</Typography>
+            </Box>
+            <Box sx={{ justifyContent: 'center', display: 'flex', p: 1 }}>
+              <Link
+                onClick={() => {
+                  navigate('/register', { replace: true })
+                }}
+                // href='/register'
+                type='submit'
+                underline="hover"
+                sx={{
+                  '&:hover ': { color: '#29ADB2', cursor: 'pointer' }
+                }}
+              >
+                {'Create an account'}
+              </Link>
+            </Box>
           </Box>
-        </Box>
-      </Container>
-    </div >
+        </Container>
+      </div >
+    </ThemeProvider>
+
 
   )
 }
