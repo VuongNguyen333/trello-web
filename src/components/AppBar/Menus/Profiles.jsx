@@ -10,13 +10,17 @@ import IconButton from '@mui/material/IconButton'
 import PersonAdd from '@mui/icons-material/PersonAdd'
 import Settings from '@mui/icons-material/Settings'
 import Logout from '@mui/icons-material/Logout'
+import { useNavigate } from 'react-router-dom'
+import { replace } from 'lodash'
 function Profiles() {
   const [anchorEl, setAnchorEl] = React.useState(null)
   const open = Boolean(anchorEl)
+  const negative = useNavigate()
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget)
   }
   const handleClose = () => {
+    negative('/login', { replace: true })
     setAnchorEl(null)
   }
   return (

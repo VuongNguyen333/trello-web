@@ -1,3 +1,4 @@
+/* eslint-disable quotes */
 /* eslint-disable react/no-unescaped-entities */
 import Box from '@mui/material/Box'
 import React, { useState } from 'react'
@@ -7,6 +8,7 @@ import { Container, Typography, TextField, Button } from '@mui/material'
 import SecurityIcon from '@mui/icons-material/Security'
 import { ReactComponent as TrelloIcon } from '~/assets/trello.svg'
 import Link from '@mui/material/Link'
+import { useNavigate } from 'react-router-dom'
 function LoginPage() {
   const styleTextField = {
     display: 'flex',
@@ -35,29 +37,49 @@ function LoginPage() {
     mr: '5px'
   }
 
-  const [email, setEmail] = useState('');
-  const [isValid, setIsValid] = useState(true);
+  const [email, setEmail] = useState(null)
+  const [isValidEmail, setIsValidEmail] = useState(true)
+  const [msgEmail, setMsgEmail] = useState('')
+  const navigate = useNavigate()
 
   const handleEmailChange = (event) => {
-    setEmail(event.target.value);
-    setIsValid(true); // Reset validation state when email changes
-  };
+    const tmpEmail = event.target.value
+    setEmail(tmpEmail)
+    const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(tmpEmail)
+    if (tmpEmail === null) {
+      setIsValidEmail(false)
+      setMsgEmail('❌ Email is required.')
+    }
+    else {
+      if (isValidEmail) {
+      // Xử lý logic khi email hợp lệ
+        setIsValidEmail(true)
+      } else {
+        setIsValidEmail(false)
+        setMsgEmail('❌ Email is invalid. VD: abc@gmail.com')
+      }
+    }
+  }
 
   const handleSubmit = (event) => {
-    event.preventDefault();
-
+    event.preventDefault()
     // Kiểm tra định dạng email
-    const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-
-    if (isValidEmail) {
-      // Xử lý logic khi email hợp lệ
-      console.log('Email hợp lệ:', email);
-    } else {
-      // Xử lý logic khi email không hợp lệ
-      console.log('Email không hợp lệ:', email);
-      setIsValid(false); // Set validation state to false
+    const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+    if (email === null) {
+      setIsValidEmail(false)
+      setMsgEmail('❌ Email is required.')
     }
-  };
+    else {
+      if (isValidEmail) {
+        // Xử lý logic khi email hợp lệ
+        setIsValidEmail(true)
+        navigate('/', { replace: true })
+      } else {
+        setIsValidEmail(false)
+        setMsgEmail('❌ Email is invalid.')
+      }
+    }
+  }
   return (
     <div style={{
       backgroundImage: `url(${loginImage})`, // Sử dụng biến loginImage
@@ -79,8 +101,6 @@ function LoginPage() {
         <Box
           sx={{
             backgroundColor: 'white',
-            width: '350px',
-            height: '350px',
             borderRadius: '15px'
           }}
         >
@@ -110,41 +130,62 @@ function LoginPage() {
               </SvgIcon>
             </Box>
           </Box>
-          <Typography variant='h6' gutterBottom sx={{ display: 'flex', justifyContent: 'center', mb: '15px', color: '#1976d2' }}>Login to your account</Typography>
-          <TextField
-            label="Username..."
-            sx={styleTextField}
-            size='small'
-          />
-          <TextField
-            label="Password"
-            type="password"
-            size='small'
-            sx={styleTextField}
-          />
-          <Box sx={{ justifyContent: 'center', display: 'flex', p: 1 }}>
-            <Button
-              variant="contained"
-              sx={{
-                alignItems: 'center',
-                justifyItems: 'center',
-                width: '300px',
-                bgcolor: '#1976d2',
-                '&:hover': { bgcolor: '#1976d2' }
-              }}
-            >
-              Login
-            </Button>
-          </Box>
+          <Typography
+            variant='h6'
+            gutterBottom
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              mb: '15px', color: '#1976d2'
+            }}
+          >
+            Login to your account
+          </Typography>
+          <form onSubmit={handleSubmit}>
+            <TextField
+              label="Username..."
+              sx={styleTextField}
+              size='small'
+              value={email}
+              onChange={handleEmailChange}
+              error={!isValidEmail}
+              helperText={!isValidEmail ? `${msgEmail}` : null}
+            />
+            <TextField
+              label="Password"
+              type="password"
+              size='small'
+              sx={styleTextField}
+            />
+            <Box sx={{ justifyContent: 'center', display: 'flex', p: 1 }}>
+              <Button
+                type='submit'
+                variant="contained"
+                sx={{
+                  alignItems: 'center',
+                  justifyItems: 'center',
+                  width: '300px',
+                  bgcolor: '#1976d2',
+                  '&:hover': { bgcolor: '#1976d2' }
+                }}
+              >
+                Login
+              </Button>
+            </Box>
+          </form>
           <Box sx={{ justifyContent: 'center', display: 'flex', p: 1 }}>
             <Typography > Don't have an account?</Typography>
           </Box>
           <Box sx={{ justifyContent: 'center', display: 'flex', p: 1 }}>
             <Link
-              href="/register"
+              onClick={() => {
+                navigate('/register', { replace: true })
+              }}
+              // href='/register'
+              type = 'submit'
               underline="hover"
               sx={{
-                '&:hover ': { color: '#29ADB2' }
+                '&:hover ': { color: '#29ADB2', cursor: 'pointer' }
               }}
             >
               {'Create an account'}
