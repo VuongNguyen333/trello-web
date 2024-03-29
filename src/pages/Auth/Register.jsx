@@ -7,7 +7,7 @@ import { Container, Typography, TextField, Button } from '@mui/material'
 import SecurityIcon from '@mui/icons-material/Security'
 import { ReactComponent as TrelloIcon } from '~/assets/trello.svg'
 import Link from '@mui/material/Link'
-import { isEmpty } from 'lodash'
+import { useNavigate } from 'react-router-dom'
 function RegisterPage() {
   const styleTextField = {
     display: 'flex',
@@ -25,6 +25,7 @@ function RegisterPage() {
       color: '#394867'
     }
   }
+  const negative = useNavigate()
 
   const [email, setEmail] = useState(null)
   const [password, setPassword] = useState('')
@@ -36,7 +37,7 @@ function RegisterPage() {
   const handleEmailChange = (event) => {
     const tmpEmail = event.target.value
     setEmail(tmpEmail)
-    const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+    const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(tmpEmail)
     if (tmpEmail === null) {
       setIsValidEmail(false)
       setMsgEmail('❌ Email is required.')
@@ -53,7 +54,6 @@ function RegisterPage() {
   }
   const handlePassChange = (event) => {
     const tmpPass = event.target.value
-    console.log('🚀 ~ handlePassChange ~ tmpPass:', tmpPass)
     setPassword(tmpPass)
     const isValidPass = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/.test(tmpPass)
     if (tmpPass === null) {
@@ -223,10 +223,12 @@ function RegisterPage() {
           </Box>
           <Box sx={{ justifyContent: 'center', display: 'flex', mb: '15px' }}>
             <Link
-              href="/login"
+              onClick={() => {
+                negative('/login', { replace: true })
+              }}
               underline="hover"
               sx={{
-                '&:hover ': { color: '#29ADB2' }
+                '&:hover ': { color: '#29ADB2', cursor: 'pointer' }
               }}
             >
               {'Sign in'}
