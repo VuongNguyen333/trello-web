@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
@@ -23,8 +23,8 @@ import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { useConfirm } from 'material-ui-confirm'
 import { useDispatch, useSelector } from 'react-redux'
-import { createNewCardRedux, removeColumn } from '~/redux/apiRequests'
-import { cloneDeep } from 'lodash'
+import { createNewCardRedux, removeColumn, updateTitleColumn } from '~/redux/apiRequests'
+import { cloneDeep, debounce } from 'lodash'
 function Column({ column }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: column?._id,
@@ -64,9 +64,32 @@ function Column({ column }) {
     toggleOpenNewCardForm()
     setNewCardTitle('')
   }
+  const [title, setTitle] = useState('')
+  const [debouncedTitle, setDebouncedTitle] = useState('')
 
-  const updateColumnTitle = () => {
-    return
+  useEffect(() => {
+    // Khai báo hàm debounce với khoảng thời gian lớn hơn
+    const delayedAPICall = debounce((newTitle) => {
+      console.log('Call API to update title:', newTitle)
+      updateTitleColumn(board, column._id, newTitle, dispatch)
+      // Gọi API với tiêu đề mới
+    }, 1500)
+
+    // Đợi một khoảng thời gian sau khi người dùng dừng nhập trước khi gọi API
+    const timeoutId = setTimeout(() => {
+      delayedAPICall(debouncedTitle)
+    }, 1000) // Đợi 1 giây sau khi dừng nhập trước khi gọi API
+
+    // Clear timeout khi component unmount hoặc khi title thay đổi
+    return () => {
+      clearTimeout(timeoutId)
+    }
+  }, [debouncedTitle]) // Gọi useEffect khi title thay đổi
+
+  const updateColumnTitle = (event) => {
+    const newTitle = event.target.value
+    setTitle(newTitle)
+    setDebouncedTitle(newTitle) // Lưu lại tiêu đề để gọi API sau đó
   }
 
   const confirmDeleteColumn = useConfirm()
@@ -122,9 +145,10 @@ function Column({ column }) {
           <TextField
             id="outlined-helperText"
             defaultValue={column?.title}
+            // value={}
             size='small'
             data-no-dnd='true'
-            onChange={(e) => updateColumnTitle(e.target.value)}
+            onChange={updateColumnTitle}
             sx={{
               '& fieldset': { borderWidth: '0px' },
               // '&:hover fieldset': { borderWidth: '2px !important' },

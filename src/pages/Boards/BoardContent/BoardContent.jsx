@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback, useRef } from 'react'
 import { generatePlaceholderCard } from '~/utils/formatters'
 import Card from './ListColumns/Column/ListCards/Card/Card'
 import ListColumns from './ListColumns/ListColumns'
-import { moveColumns, moveCardInColumn, moveCardToDiffColumn } from '~/redux/apiRequests'
+import { moveColumns, updateColumnDetails, moveCardToDiffColumn } from '~/redux/apiRequests'
 import Column from './ListColumns/Column/Column'
 import { arrayMove } from '@dnd-kit/sortable'
 import { cloneDeep, isEmpty } from 'lodash'
@@ -224,7 +224,7 @@ function BoardContent() {
           })
 
           // call ham`
-          moveCardInColumn(board, dndOrderedCards, dndOrderedCardIds, oldColumnWhenDraggingCard._id, dispatch)
+          updateColumnDetails(board, dndOrderedCards, dndOrderedCardIds, oldColumnWhenDraggingCard._id, dispatch)
         }
       }
     }

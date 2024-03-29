@@ -14,7 +14,7 @@ import { ReactComponent as TrelloIcon } from '~/assets/trello.svg'
 import Link from '@mui/material/Link'
 import { useNavigate } from 'react-router-dom'
 import { ThemeProvider } from '@emotion/react'
-import { createTheme } from '@mui/material/styles';
+import { createTheme } from '@mui/material/styles'
 
 // Tạo chủ đề cho light mode
 const lightTheme = createTheme({

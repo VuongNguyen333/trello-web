@@ -107,7 +107,7 @@ export const moveColumns = async (board, dndOrderedColumns, dispatch) => {
   }
 }
 
-export const moveCardInColumn = async (board, dndOrderedCards, dndOrderedCardIds, columnId, dispatch) => {
+export const updateColumnDetails = async (board, dndOrderedCards, dndOrderedCardIds, columnId, dispatch) => {
   dispatch(getStart())
   try {
     const newBoard = cloneDeep(board)
@@ -117,6 +117,21 @@ export const moveCardInColumn = async (board, dndOrderedCards, dndOrderedCardIds
       columnToUpdate.cardOrderIds = dndOrderedCardIds
     }
     updateColumnDetailsAPI(columnId, { cardOrderIds: dndOrderedCardIds })
+    dispatch(getSuccess(newBoard))
+  } catch (error) {
+    dispatch(getError())
+  }
+}
+
+export const updateTitleColumn = async (board, columnId, columnTitle, dispatch) => {
+  dispatch(getStart())
+  try {
+    const newBoard = cloneDeep(board)
+    const columnToUpdate = newBoard.columns.find(column => column._id === columnId)
+    if (columnToUpdate) {
+      columnToUpdate.title = columnTitle
+    }
+    updateColumnDetailsAPI(columnId, { title: columnTitle })
     dispatch(getSuccess(newBoard))
   } catch (error) {
     dispatch(getError())
