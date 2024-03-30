@@ -77,8 +77,9 @@ function Profiles() {
         </MenuItem>
         <MenuItem onClick={() => {
           localStorage.setItem('mui-mode', 'light')
-          navigate('/login', { replace: true })
-          window.location.reload()
+          navigate('/login', { replace: true }) // Chuyển hướng đến trang login
+          // window.location.reload(true)
+
         }}>
           <ListItemIcon>
             <Logout fontSize="small" />

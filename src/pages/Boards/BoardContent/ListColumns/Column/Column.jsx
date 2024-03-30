@@ -84,7 +84,7 @@ function Column({ column }) {
     return () => {
       clearTimeout(timeoutId)
     }
-  }, [debouncedTitle]) // Gọi useEffect khi title thay đổi
+  }, [debouncedTitle])
 
   const updateColumnTitle = (event) => {
     const newTitle = event.target.value
