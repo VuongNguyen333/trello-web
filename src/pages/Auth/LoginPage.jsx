@@ -36,8 +36,7 @@ function LoginPage() {
     '& input:-webkit-autofill': {
       WebkitBoxShadow: '0 0 0 100px #EEF5FF inset !important',
       WebkitTextFillColor: '#394867!important',
-    },
-
+    }
   }
 
   const styleBoxIcon = {
